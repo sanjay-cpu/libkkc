@@ -34,8 +34,8 @@ install:
 
 script:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && NOCONFIGURE=1 ./autogen.sh"
-  - docker exec -it $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
-  - docker exec -it $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libkkc.pot && make check V=1"
+  - docker exec -i $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
+  - docker exec -i $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libkkc.pot && make check V=1"
 
 after_failure:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat tests/test-suite.log"
