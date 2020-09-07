@@ -31,11 +31,13 @@ before_install:
 install:
   - docker cp . $CONTAINER:/srcdir
   - docker exec $CONTAINER chown -R user /srcdir
+before_script:
+  - if [ "$EXTRA_PKGS" = "libasan" ]; then  export TRAVIS_COMPILER=clang; export CC=${CC:-clang}; export CC_FOR_BUILD=${CC_FOR_BUILD:-clang}; fi
 
 script:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && NOCONFIGURE=1 ./autogen.sh"
-  - docker exec -i $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
-  - docker exec -i $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libkkc.pot && make check V=1"
+  - docker exec $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
+  - docker exec $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libkkc.pot && make check V=1"
 
 after_failure:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat tests/test-suite.log"
