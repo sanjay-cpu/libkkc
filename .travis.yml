@@ -13,10 +13,10 @@ env:
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'" EXTRA_PKGS="libasan"
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'" EXTRA_PKGS="libubsan"
 
-job:
-  exclude:
-      - arch: ppc64le
-        env: BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'" EXTRA_PKGS="libasan"
+    #job:
+    #exclude:
+    # - arch: ppc64le
+    #   env: BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'" EXTRA_PKGS="libasan"
 services:
   - docker
 
@@ -34,8 +34,8 @@ install:
 
 script:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && NOCONFIGURE=1 ./autogen.sh"
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libkkc.pot && make check V=1"
+  - docker exec -it $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
+  - docker exec -it $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libkkc.pot && make check V=1"
 
 after_failure:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat tests/test-suite.log"
